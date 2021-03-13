@@ -42,6 +42,7 @@ class StoreProcessedPersonData implements ShouldQueue
             return response('Person data does not meet requirements', 403)->header('Content-Type', 'text/plain');
         }
 
+        // replace any \ or / that might make converting the string to a date impossible
         $date_of_birth = (isset($this->person_data['date_of_birth']))
                             ? date('Y-m-d H:i:s', strtotime(str_replace(array('\\', '/'), '-', $this->person_data['date_of_birth'])))
                             : null;
