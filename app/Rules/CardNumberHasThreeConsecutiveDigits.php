@@ -32,23 +32,33 @@ class CardNumberHasThreeConsecutiveDigits implements Rule
         // need to make it a string so we can access $value[$i];
         $value = strval($value);
 
+        // stores the last checked character in the string (value)
         $last_character = '';
+
+        // how many consecutive same digits we have, starts at 0 but is immediately set to 1 after the first character is checked
         $number_of_consecutive_same_digits = 0;
+
+        // pass trough each character in the  string (value)
         for ($i=0; $i < strlen($value); $i++) {
+            // set initial last_character as current for the beginning of the string
             if ($i === 0) {
                 $last_character = $value[$i];
             }
 
+            // increment on success
             if ($value[$i] === $last_character) {
                 $number_of_consecutive_same_digits++;
             }
 
+            // reset to 1 on failure
             if ($value[$i] !== $last_character) {
                 $number_of_consecutive_same_digits = 1;
             }
 
+            // update for the next iteration
             $last_character = $value[$i];
 
+            // stop the pass trough when condition is met
             if ($number_of_consecutive_same_digits == 3) {
                 return true;
             }
@@ -65,6 +75,6 @@ class CardNumberHasThreeConsecutiveDigits implements Rule
      */
     public function message()
     {
-        return 'The validation error message.';
+        return 'Person\'s card number should have tree consecutive equal digits';
     }
 }
