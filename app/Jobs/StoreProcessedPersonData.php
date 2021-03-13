@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\Person;
 use Illuminate\Support\Facades\Validator;
 use App\Rules\AgeBetween18and65orNull;
+use App\Rules\CardNumberHasThreeConsecutiveDigits;
 
 
 class StoreProcessedPersonData implements ShouldQueue
@@ -37,7 +38,7 @@ class StoreProcessedPersonData implements ShouldQueue
     public function handle()
     {
         // validate against requirements
-        $rules = ['date_of_birth' => new AgeBetween18and65orNull];
+        $rules = ['date_of_birth' => new AgeBetween18and65orNull, 'credit_card.number' => new CardNumberHasThreeConsecutiveDigits];
         if (Validator::make($this->person_data, $rules)->fails()) {
             return response('Person data does not meet requirements', 403)->header('Content-Type', 'text/plain');
         }
