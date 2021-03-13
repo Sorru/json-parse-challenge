@@ -20,7 +20,7 @@ class CreatePeopleTable extends Migration
             $table->boolean('checked');
             $table->text('description');
             $table->string('interest')->nullable();
-            $table->timestamp('date_of_birth')->nullable();
+            $table->datetime('date_of_birth')->nullable();
             $table->string('email');
             $table->string('account');
             $table->string('credit_card_type');
