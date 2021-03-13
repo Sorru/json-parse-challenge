@@ -11,7 +11,6 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\Person;
 use Illuminate\Support\Facades\Validator;
 use App\Rules\AgeBetween18and65orNull;
-use App\Models\ProcessingLog;
 
 
 class StoreProcessedPersonData implements ShouldQueue
@@ -19,19 +18,15 @@ class StoreProcessedPersonData implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $person_data;
-    public $last_key_sent_for_processing;
-    public $file_path;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(array $person_data, int $last_key_sent_for_processing, string $file_path)
+    public function __construct(array $person_data)
     {
         $this->person_data = $person_data;
-        $this->last_key_sent_for_processing = $last_key_sent_for_processing;
-        $this->file_path = $file_path;
     }
 
     /**
@@ -41,15 +36,6 @@ class StoreProcessedPersonData implements ShouldQueue
      */
     public function handle()
     {
-        $processing_log = ProcessingLog::firstOrNew(
-            ['file_path' => $this->file_path],
-            ['file_path' => $this->file_path, 'last_key_sent_for_processing' => -1]
-        );
-
-        // store the parsed key of the given file, used for restarting the main job
-        $processing_log->last_key_sent_for_processing = $this->last_key_sent_for_processing;
-        $processing_log->save();
-
         // validate against requirements
         $rules = ['date_of_birth' => new AgeBetween18and65orNull];
         if (Validator::make($this->person_data, $rules)->fails()) {
